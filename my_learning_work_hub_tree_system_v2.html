@@ -128,8 +128,8 @@ body.auth-locked .app{display:none!important}
 /* ===== CLOUD CONFIG =====
    Paste your Supabase Project URL and Publishable/Anon key here.
    NEVER put a service_role/secret key in this HTML file. */
-const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_PROJECT_URL_HERE';
-const SUPABASE_KEY = 'PASTE_YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY_HERE';
+const SUPABASE_URL = 'https://vnvbazmxbaveuvdloosf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_rtyY5HGdlhUCuaJarbRhhA_OrZhH2Fu';
 const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('PASTE_YOUR_') && !SUPABASE_KEY.includes('PASTE_YOUR_');
 const sb = (window.supabase && SUPABASE_CONFIGURED) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 let cloudUser = null;
