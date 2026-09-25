@@ -81,7 +81,200 @@ body.auth-locked .app{display:none!important}
 }
 
 @media(max-width:620px){.sidebar{display:none}.main{padding:14px}.top{align-items:flex-start;flex-direction:column;padding:22px 18px;min-height:190px;background-position:center}.grid,.two{grid-template-columns:1fr}.form{grid-template-columns:1fr}.field.full{grid-column:auto}.search{width:100%}.cards{grid-template-columns:1fr}.modal-bg{align-items:flex-end;padding:0}.modal{width:100%;max-height:94vh;border-radius:18px 18px 0 0}.modal #modalBody{max-height:94vh;padding:16px}.modal h2{top:-16px;padding:16px 0 10px}.modal-actions{bottom:-16px}}
+
+/* ===== Usability consistency patch =====
+   Keeps the existing markup and behavior, while reducing visual variants. */
+
+/* 1. Shared type scale: 10 rendered sizes or fewer. */
+.top h1{font-size:28px}
+.icon{font-size:28px}
+.kpi{font-size:22px}
+.auth-title{font-size:20px}
+.tree-meta,.tree-percent,.btn.tiny,.tree-actions-inline .btn.tiny:first-child{font-size:10px}
+
+/* 2. Shared radius tokens: 10px controls, 14px surfaces, 999px pills, 50% avatar. */
+:root{--radius-control:10px;--radius-surface:14px}
+.nav button,.btn,.search,.notice,.auth-note,.day,.recent-item,.result-item,
+.table-wrap,.tree-panel,.tree-toggle,.btn.tiny{border-radius:var(--radius-control)}
+.card,.top,.category-photo,.category-photo.large,.auth-card{border-radius:var(--radius-surface)}
+.progress{border-radius:999px}
+
+/* 3. Four practical button variants: default, primary, danger, compact. */
+.btn{min-height:42px;padding:9px 14px;border-radius:var(--radius-control)}
+.btn.small{min-height:34px;padding:6px 10px;font-size:13px}
+.btn.tiny{min-height:30px;padding:5px 8px;font-size:10px}
+.btn.primary{min-height:42px}
+.btn.danger{color:#b91c1c}
+.btn.small.primary{min-height:34px}
+.btn.tiny.primary{min-height:30px}
+
+/* 4–5. One 72px icon frame for every Main Category card.
+   Images and fallback emoji occupy the same visual footprint. */
+.category-cards .card .icon{
+  width:72px;height:72px;display:flex;align-items:center;justify-content:center;
+  font-size:28px;line-height:1;border-radius:var(--radius-surface);
+  overflow:hidden;background:#f8fafc;
+}
+.category-cards .card .category-photo{
+  width:72px;height:72px;border-radius:var(--radius-surface);margin:0;
+}
+.category-cards .card h3{margin:10px 0 5px}
+
+/* 6. Preserve the four-column rhythm when exactly five category cards exist. */
+.category-cards{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.category-cards:has(> .card:nth-child(5):last-child) > .card:last-child{
+  grid-column:2 / 4;
+}
+
+/* 7. Quick Capture is secondary, so keep it visually lighter than primary actions. */
+.quick-grid button{
+  min-height:44px;
+  padding:8px 12px;
+  font-size:13px;
+}
+
+/* 8. Header controls share one 42px baseline. */
+.top .actions{align-items:center}
+.top .search,
+.top .actions > .btn.primary{
+  height:42px;
+  min-height:42px;
+  box-sizing:border-box;
+}
+.top .search{padding:9px 12px}
+
+/* Responsive: keep the category layout usable on smaller screens. */
+@media(max-width:900px){
+  .category-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .category-cards:has(> .card:nth-child(5):last-child) > .card:last-child{grid-column:auto}
+}
+@media(max-width:620px){
+  .category-cards{grid-template-columns:1fr}
+  .category-cards:has(> .card:nth-child(5):last-child) > .card:last-child{grid-column:auto}
+  .quick-grid button{min-height:42px}
+}
+
+
+/* ===== MY RECORDS: NOTES + MULTI FILE DOCUMENT MANAGER ===== */
+.rm-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rm-full{grid-column:1/-1}
+.rm-form label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}
+.rm-form input,.rm-form select,.rm-form textarea{width:100%;box-sizing:border-box}
+.rm-form textarea{min-height:130px;resize:vertical}
+.rm-drop{border:2px dashed #cbd5e1;border-radius:14px;padding:18px;text-align:center;background:#f8fafc}
+.rm-drop.drag{border-color:var(--primary);background:#eef2ff}
+.rm-drop input{display:none}
+.rm-file-list{display:grid;gap:8px;margin-top:12px}
+.rm-file{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.rm-file-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:9px;background:#f1f5f9;font-size:18px;flex:0 0 auto}
+.rm-file-info{min-width:0;flex:1}
+.rm-file-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rm-file-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.rm-attachments{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rm-chip{display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:999px;padding:5px 8px;font-size:12px}
+.rm-view{display:grid;gap:14px}
+.rm-notes{white-space:pre-wrap;line-height:1.65;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:14px}
+.rm-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.rm-photo{width:100%;height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:pointer}
+.rm-pdf{width:100%;height:65vh;border:1px solid var(--line);border-radius:10px}
+.rm-attachment-card{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
+.rm-attachment-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.rm-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.rm-toolbar .search{flex:1;min-width:220px}
+.rm-empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+@media(max-width:650px){.rm-form{grid-template-columns:1fr}.rm-full{grid-column:auto}}
+
+
+/* ===== MY RECORDS — NOTES-FIRST DESIGN ===== */
+.rm-form .field:has(#fNotes){
+  grid-column:1/-1;
+}
+.rm-form .field:has(#fNotes) label{
+  display:flex;align-items:center;gap:8px;font-size:15px;
+  padding:11px 13px 9px;border:1px solid var(--line);
+  border-bottom:0;border-radius:14px 14px 0 0;
+  background:linear-gradient(180deg,#f8fafc,#fff);
+  margin:0;
+}
+.rm-form #fNotes{
+  min-height:220px;
+  padding:15px 16px;
+  border-radius:0 0 14px 14px;
+  border-top:0;
+  line-height:1.65;
+  background:#fff;
+  box-shadow:0 5px 18px rgba(15,23,42,.06);
+}
+.rm-form #fNotes:focus{
+  border-color:var(--primary);
+  box-shadow:0 5px 20px rgba(79,70,229,.10);
+}
+.rm-notes-help{
+  font-size:12px;color:var(--muted);margin-top:7px;
+}
+.rm-file-list{
+  padding:2px;
+}
+
 </style>
+
+<style>
+/* ===== COURSE ROOT MANAGEMENT — POLISHED ===== */
+.crm-shell{display:grid;gap:16px}
+.crm-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 18px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(135deg,#fff,#f8faff);
+  box-shadow:0 5px 18px rgba(15,23,42,.05)
+}
+.crm-title{margin:0;font-size:20px}
+.crm-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.crm-actions{display:flex;gap:8px;flex-wrap:wrap}
+.crm-path{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  font-size:13px;color:var(--muted)
+}
+.crm-path strong{color:var(--text)}
+.crm-toolbar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap
+}
+.crm-toolbar .search{flex:1;min-width:220px}
+.crm-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px
+}
+.crm-card{
+  position:relative;padding:16px!important;min-height:165px;
+  display:flex;flex-direction:column
+}
+.crm-card h3{margin:0 0 5px;font-size:16px}
+.crm-count{
+  display:inline-flex;width:max-content;padding:4px 8px;
+  border-radius:999px;background:#f1f5f9;font-size:12px;color:var(--muted)
+}
+.crm-card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:12px}
+.crm-card .crm-primary{
+  color:inherit;text-decoration:none;display:block;border-radius:10px
+}
+.crm-card .crm-primary:hover{background:#f8fafc}
+.crm-empty{
+  padding:30px;text-align:center;border:1px dashed var(--line);
+  border-radius:14px;color:var(--muted)
+}
+.crm-statbar{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px
+}
+.crm-stat{
+  padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff
+}
+.crm-stat b{display:block;font-size:18px}.crm-stat span{font-size:11px;color:var(--muted)}
+@media(max-width:700px){
+  .crm-head{align-items:flex-start;flex-direction:column}
+  .crm-statbar{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <input id="profilePhotoInput" type="file" accept="image/*" style="display:none" onchange="setProfilePhoto(this)">
@@ -115,7 +308,7 @@ body.auth-locked .app{display:none!important}
 </aside>
 <main class="main">
   <div class="top"><div><h1 id="title">Dashboard</h1><div class="muted">Daily Learning • Office Work • Home Work</div></div>
-    <div class="actions"><input id="globalSearch" class="search" placeholder="Search records, topics, courses..."><button class="btn primary" onclick="openRecord()">＋ Daily Record</button></div>
+    <div class="actions"><input id="globalSearch" class="search" aria-label="Search records, topics, courses" placeholder="Search records, topics, courses..."><button class="btn primary" onclick="openRecord()">＋ Daily Record</button></div>
   </div>
   <div id="content"></div>
 </main>
@@ -395,7 +588,7 @@ function renderDashboard(c){
  <div class="card stat"><div class="muted">My Records</div><div class="num">${db.records.length}</div></div>
  <div class="card stat"><div class="muted">Learning/Work Hours</div><div class="num">${hours.toFixed(1)}</div></div></div>
  <div class="section"><div class="section-head"><h2>Main Categories</h2><button class="btn small primary" onclick="openCategory()">＋ Add Main Category</button></div>
- <div class="cards">${db.categories.map(x=>{let rs=db.records.filter(r=>r.categoryId===x.id), d=rs.filter(r=>r.status==='Completed').length, p=rs.length?Math.round(d/rs.length*100):0;return `<div class="card clickable" onclick="showCategory('${x.id}')"><div class="icon">${x.photo?`<img class="category-photo" src="${x.photo}" alt="${esc(x.name)}">`:esc(x.icon||"📚")}</div><h3>${esc(x.name)}</h3><div class="muted">${db.types.filter(t=>t.categoryId===x.id).length} course types • ${db.courses.filter(q=>db.types.some(t=>t.id===q.typeId&&t.categoryId===x.id)).length} courses</div><div class="progress"><i style="width:${p}%"></i></div><div class="muted">${p}% record completion</div></div>`}).join('')}</div></div>
+ <div class="cards category-cards">${db.categories.map(x=>{let rs=db.records.filter(r=>r.categoryId===x.id), d=rs.filter(r=>r.status==='Completed').length, p=rs.length?Math.round(d/rs.length*100):0;return `<div class="card clickable" onclick="showCategory('${x.id}')"><div class="icon">${x.photo?`<img class="category-photo" src="${x.photo}" alt="${esc(x.name)}">`:esc(x.icon||"📚")}</div><h3>${esc(x.name)}</h3><div class="muted">${db.types.filter(t=>t.categoryId===x.id).length} course types • ${db.courses.filter(q=>db.types.some(t=>t.id===q.typeId&&t.categoryId===x.id)).length} courses</div><div class="progress"><i style="width:${p}%"></i></div><div class="muted">${p}% record completion</div></div>`}).join('')}</div></div>
  <div class="section two"><div class="card"><h3>Today</h3><div class="kpi">${todayN}</div><div class="muted">records added today</div></div><div class="card"><h3>Completed</h3><div class="kpi">${done}</div><div class="muted">completed records</div></div></div>
  <div class="section"><div class="section-head"><h2>⚡ Quick Capture</h2><span class="muted">Use the existing My Record system</span></div><div class="quick-grid"><button class="btn" onclick="openRecord()">📝 Add My Record</button><button class="btn" onclick="show('categories')">🗂️ Open Categories</button><button class="btn" onclick="show('courses')">📚 Open Courses</button><button class="btn" onclick="show('search')">🔎 Search Everything</button></div></div>
  <div class="section"><div class="section-head"><h2>🕘 Recent My Records</h2><button class="btn small" onclick="show('records')">View All</button></div><div class="recent-list">${db.records.slice().sort((a,b)=>(b.updatedAt||b.date||'').localeCompare(a.updatedAt||a.date||'')).slice(0,6).map(r=>`<div class="recent-item"><div><b>${esc(r.title||'Untitled')}</b><div class="muted">${fmtDate(r.date)} • ${esc(getCourse(r.courseId)?.name||getCat(r.categoryId)?.name||'')}</div></div><button class="btn small" onclick="viewNotes('${r.id}')">Open</button></div>`).join('')||'<div class="card empty">No records yet. Start by adding your first My Record.</div>'}</div></div>`;
@@ -565,7 +758,7 @@ function filterRecords(){
    return 0;
  });
 
- wrap.innerHTML=rs.length?`<div class="muted" style="margin:0 0 8px">${rs.length} record${rs.length===1?'':'s'} found</div><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Category / Course</th><th>Topic</th><th>Work / Learning</th><th>Web Link</th><th>Hours</th><th>Status</th><th>Action</th></tr></thead><tbody>${rs.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${esc(getCat(r.categoryId)?.name||'')}<br><span class="muted">${esc(getCourse(r.courseId)?.name||'')}</span></td><td>${esc(getTopic(r.topicId)?.name||'')}</td><td><b>${esc(r.title||'')}</b>${plainText(r.notes)?`<br><span class="muted">${esc(plainText(r.notes).slice(0,70))}${plainText(r.notes).length>70?'…':''}</span>`:''}</td><td>${r.webLink?`<a href="${esc(r.webLink)}" target="_blank" rel="noopener" class="btn small">🔗 Open</a>`:'—'}</td><td>${(+r.hours||0).toFixed(1)}</td><td><span class="status ${r.status.replace(' ','\\ ')}">${esc(r.status)}</span></td><td><button class="btn small" onclick="viewNotes('${r.id}')">📝 Notes</button> <button class="btn small" onclick="openRecord('${r.id}')">Edit</button> <button class="btn small danger" onclick="delRecord('${r.id}')">Delete</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty">No records found.</div>';
+ wrap.innerHTML=rs.length?`<div class="muted" style="margin:0 0 8px">${rs.length} record${rs.length===1?'':'s'} found</div><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Category / Course</th><th>Topic</th><th>Work / Learning</th><th>Web Link</th><th>Hours</th><th>Status</th><th>Action</th></tr></thead><tbody>${rs.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${esc(getCat(r.categoryId)?.name||'')}<br><span class="muted">${esc(getCourse(r.courseId)?.name||'')}</span></td><td>${esc(getTopic(r.topicId)?.name||'')}</td><td><b>${esc(r.title||'')}</b>${plainText(r.notes)?`<br><span class="muted">${esc(plainText(r.notes).slice(0,70))}${plainText(r.notes).length>70?'…':''}</span>`:''}</td><td>${r.webLink?`<a href="${esc(r.webLink)}" target="_blank" rel="noopener" class="btn small">🔗 Open</a>`:'—'}</td><td>${(+r.hours||0).toFixed(1)}</td><td><span class="status ${r.status.replace(' ','\\ ')}">${esc(r.status)}</span></td><td><button class="btn small" onclick="rmOpenNotesEditor('${r.id}')">📝 Notes</button> <button class="btn small" onclick="openRecord('${r.id}')">Edit</button> <button class="btn small danger" onclick="delRecord('${r.id}')">Delete</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty">No records found.</div>';
 }
 function viewNotes(id){let r=db.records.find(x=>x.id===id);if(!r)return;openModal(`<h2>📝 Record Notes</h2><div class="notice"><b>${esc(r.title||'Untitled Record')}</b><br><span class="muted">${fmtDate(r.date)} • ${esc(getTopic(r.topicId)?.name||'')}</span></div><div class="card" style="margin-top:12px;white-space:pre-wrap;line-height:1.65;max-height:55vh;overflow:auto">${r.notes?esc(r.notes):'<span class="muted">No notes added for this record.</span>'}</div><div class="modal-actions"><button class="btn" onclick="closeModal()">Close</button><button class="btn primary" onclick="closeModal();openRecord('${r.id}')">Edit Record</button></div>`)}
 
@@ -763,5 +956,738 @@ function restore(inp){
 function resetApp(){if(confirm('Reset everything? This cannot be undone unless you have a backup.')){db=seed();save();render()}}
 initAuth();
 </script>
+<script>
+
+/* ===== COMPLETE MY RECORDS MANAGER ===== */
+const RM_DB_PREFIX='my_work_hub_record_file_';
+const RM_MAX_FILE=30*1024*1024;
+let rmObjectUrls=[];
+let rmEditId=null;
+let rmSelectedFiles=[];
+
+function rmType(name=''){
+  const e=name.split('.').pop().toLowerCase();
+  if(['jpg','jpeg','png','gif','webp','bmp','svg'].includes(e)) return 'image';
+  if(e==='pdf') return 'pdf';
+  if(['doc','docx','odt'].includes(e)) return 'doc';
+  if(['xls','xlsx','csv'].includes(e)) return 'excel';
+  if(['ppt','pptx'].includes(e)) return 'ppt';
+  return 'other';
+}
+function rmIcon(type){return {image:'🖼️',pdf:'📕',doc:'📝',excel:'📊',ppt:'📽️',other:'📎'}[type]||'📎'}
+function rmSize(n){if(!n)return '0 KB';const u=['B','KB','MB','GB'];let i=0,x=n;while(x>=1024&&i<u.length-1){x/=1024;i++}return `${x.toFixed(i?1:0)} ${u[i]}`}
+function rmSafe(v){return esc(String(v??''))}
+function rmNewId(){return 'file_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9)}
+function rmFileKey(id){return RM_DB_PREFIX+id}
+function rmOpenStore(){
+  return idbOpen();
+}
+async function rmPutFile(id,file){
+  const d=await rmOpenStore();
+  return new Promise((resolve,reject)=>{
+    const tx=d.transaction(IDB_STORE,'readwrite');
+    tx.objectStore(IDB_STORE).put({id,name:file.name,type:file.type||'application/octet-stream',size:file.size,blob:file},rmFileKey(id));
+    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+  });
+}
+async function rmGetFile(id){
+  const d=await rmOpenStore();
+  return new Promise((resolve,reject)=>{
+    const tx=d.transaction(IDB_STORE,'readonly');
+    const req=tx.objectStore(IDB_STORE).get(rmFileKey(id));
+    req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);
+  });
+}
+async function rmDeleteFile(id){
+  try{
+    const d=await rmOpenStore();
+    await new Promise((resolve,reject)=>{
+      const tx=d.transaction(IDB_STORE,'readwrite');
+      tx.objectStore(IDB_STORE).delete(rmFileKey(id));
+      tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+    });
+  }catch(e){}
+}
+function rmClearUrls(){
+  rmObjectUrls.forEach(u=>URL.revokeObjectURL(u));
+  rmObjectUrls=[];
+}
+function rmUrl(blob){
+  const u=URL.createObjectURL(blob);rmObjectUrls.push(u);return u;
+}
+function rmRenderSelected(){
+  const box=document.getElementById('rmFileList');if(!box)return;
+  const existing=(document.getElementById('rmExistingFiles')?.value||'');
+  if(!rmSelectedFiles.length&&!existing)return box.innerHTML='<div class="muted">No files selected.</div>';
+  box.innerHTML=rmSelectedFiles.map((f,i)=>`
+    <div class="rm-file">
+      <div class="rm-file-icon">${rmIcon(rmType(f.name))}</div>
+      <div class="rm-file-info"><div class="rm-file-name">${rmSafe(f.name)}</div><div class="rm-file-meta">${rmSize(f.size)} • New file</div></div>
+      <button type="button" class="btn small" onclick="rmRemoveSelected(${i})">Remove</button>
+    </div>`).join('');
+}
+function rmRemoveSelected(i){rmSelectedFiles.splice(i,1);rmRenderSelected()}
+async function rmPickFiles(list){
+  for(const f of Array.from(list||[])){
+    if(f.size>RM_MAX_FILE){alert(`${f.name} is larger than 30 MB.`);continue}
+    if(!rmSelectedFiles.some(x=>x.name===f.name&&x.size===f.size))rmSelectedFiles.push(f);
+  }
+  rmRenderSelected();
+}
+function rmDropSetup(){
+  const input=document.getElementById('rmFiles'),drop=document.getElementById('rmDrop');
+  if(input)input.onchange=e=>rmPickFiles(e.target.files);
+  if(!drop)return;
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')}));
+  drop.addEventListener('drop',e=>rmPickFiles(e.dataTransfer.files));
+}
+
+openRecord=async function(id,preCourse){
+  rmClearUrls();rmEditId=id||null;rmSelectedFiles=[];
+  const x=id?db.records.find(r=>r.id===id):null;
+  const cats=db.categories.map(cat=>`<option value="${rmSafe(cat.id)}" ${x?.categoryId===cat.id?'selected':''}>${rmSafe(cat.icon||'📁')} ${rmSafe(cat.name)}</option>`).join('');
+  openModal(`<div class="rm-view">
+    <div class="section-head">
+      <div><h2>${x?'✏️ Edit My Record':'📝 Add My Record'}</h2>
+      <div class="muted">Notes + Photos + PDF + DOC/DOCX + Excel + PPT + Other Files</div></div>
+      <button class="btn" onclick="closeModal();rmClearUrls()">Close</button>
+    </div>
+    <div class="rm-form">
+      <div class="field"><label for="fDate">📅 Date</label><input type="date" id="fDate" value="${rmSafe(x?.date||new Date().toISOString().slice(0,10))}"></div>
+      <div class="field"><label for="fCat">Main Category</label><select id="fCat" onchange="cascadeTypes()">${cats}</select></div>
+      <div class="field"><label for="fType">Course Type</label><select id="fType" onchange="cascadeCourses()"></select></div>
+      <div class="field"><label for="fCourse">Course</label><select id="fCourse" onchange="cascadeTopics()"></select></div>
+      <div class="field"><label for="fTopic">Topic</label><select id="fTopic"></select></div>
+      <div class="field"><label for="fHours">Learning / Work Time (hours)</label><input type="number" step="0.1" min="0" id="fHours" value="${rmSafe(x?.hours??'0')}"></div>
+      <div class="field"><label for="fPriority">⭐ Priority</label><select id="fPriority">${['Low','Normal','High','Urgent'].map(s=>`<option ${x?.priority===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field"><label for="fStatus">✅ Status</label><select id="fStatus">${['Started','In Progress','Completed','Pending'].map(s=>`<option ${x?.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field full"><label for="fTitle">Record Title *</label><input id="fTitle" value="${rmSafe(x?.title||'')}" placeholder="e.g. DCHB Review Meeting"></div>
+      <div class="field full"><label for="fNotes">📝 Notes</label><textarea id="fNotes" placeholder="Write your complete notes here…
+
+Meeting points
+Important decisions
+Work progress
+Follow-up actions
+References / observations
+Other details">${rmSafe(plainText(x?.notes||''))}</textarea><div class="rm-notes-help">Write everything related to this record here. Photos and documents can be attached below.</div></div>
+      <div class="field full"><label for="fWebLink">🔗 Web Link (optional)</label><input type="url" id="fWebLink" value="${rmSafe(x?.webLink||'')}" placeholder="https://example.com"></div>
+      <div class="field full"><label>📎 Photos & Documents</label>
+        <div id="rmDrop" class="rm-drop">
+          <input id="rmFiles" type="file" multiple accept="image/*,.pdf,.doc,.docx,.odt,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.zip">
+          <strong>Drag & Drop files here</strong><div class="muted">or choose files • Maximum 30 MB per file</div>
+          <button type="button" class="btn primary" onclick="document.getElementById('rmFiles').click()">＋ Add Photos / Documents</button>
+        </div>
+        <div id="rmFileList" class="rm-file-list"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal();rmClearUrls()">Cancel</button>
+      <button class="btn primary" onclick="rmSaveRecord()">💾 ${x?'Update Record':'Save Record'}</button>
+    </div>
+  </div>`);
+  window._editRecord=x;
+  cascadeTypes(x?.typeId,x?.courseId,x?.topicId);
+  rmRenderSelected();rmDropSetup();
+  if(x?.attachments?.length){
+    const box=document.getElementById('rmFileList');
+    box.innerHTML=x.attachments.map((f,i)=>`<div class="rm-file">
+      <div class="rm-file-icon">${rmIcon(rmType(f.name))}</div>
+      <div class="rm-file-info"><div class="rm-file-name">${rmSafe(f.name)}</div><div class="rm-file-meta">${rmSize(f.size)} • Saved attachment</div></div>
+      <button type="button" class="btn small danger" onclick="rmRemoveExisting('${rmSafe(f.id)}')">Remove</button>
+    </div>`).join('') + (rmSelectedFiles.length?document.getElementById('rmFileList').innerHTML:'');
+  }
+}
+
+function rmRemoveExisting(fid){
+  const x=rmEditId?db.records.find(r=>r.id===rmEditId):null;if(!x)return;
+  x.attachments=(x.attachments||[]).filter(f=>f.id!==fid);
+  rmDeleteFile(fid);
+  const b=document.getElementById('rmFileList');
+  if(b)b.querySelectorAll('.rm-file').forEach(el=>{if(el.innerHTML.includes(fid))el.remove()});
+  if(b&&!b.children.length)b.innerHTML='<div class="muted">No files selected.</div>';
+}
+
+async function rmSaveRecord(){
+  const fileInput=document.getElementById('rmFiles');
+  const selected=rmSelectedFiles.slice();
+  const old=rmEditId?db.records.find(r=>r.id===rmEditId):null;
+  const title=f('fTitle').trim();
+  if(!title){alert('Record Title is required.');return}
+  const r=old||{id:uid('rec'),createdAt:new Date().toISOString()};
+  Object.assign(r,{
+    date:f('fDate'),categoryId:f('fCat'),typeId:f('fType'),courseId:f('fCourse'),topicId:f('fTopic'),
+    title,notes:f('fNotes'),webLink:f('fWebLink').trim(),hours:+f('fHours')||0,status:f('fStatus'),
+    priority:f('fPriority'),updatedAt:new Date().toISOString()
+  });
+  if(!Array.isArray(r.attachments))r.attachments=[];
+  const btns=document.querySelectorAll('.modal-actions button');btns.forEach(b=>b.disabled=true);
+  try{
+    for(const file of selected){
+      const fid=rmNewId();
+      await rmPutFile(fid,file);
+      r.attachments.push({id:fid,name:file.name,type:file.type||'application/octet-stream',size:file.size});
+    }
+    if(!old)db.records.push(r);
+    save();closeModal();rmClearUrls();rmEditId=null;rmSelectedFiles=[];render();
+  }catch(e){
+    alert('Could not save one of the files. Please try again.');
+    btns.forEach(b=>b.disabled=false);
+  }
+}
+
+async function rmLoadFile(fid){
+  try{return await rmGetFile(fid)}catch(e){return null}
+}
+async function rmViewRecord(id){
+  rmClearUrls();const r=db.records.find(x=>x.id===id);if(!r)return;
+  const files=Array.isArray(r.attachments)?r.attachments:[];
+  openModal(`<div class="rm-view">
+    <div class="section-head"><div><h2>👁️ ${rmSafe(r.title||'My Record')}</h2><div class="muted">${fmtDate(r.date)} • ${rmSafe(getCat(r.categoryId)?.name||'')}${r.location?' • '+rmSafe(r.location):''}</div></div><button class="btn" onclick="closeModal();rmClearUrls()">Close</button></div>
+    <div class="notice"><b>⭐ Priority:</b> ${rmSafe(r.priority||'Normal')} &nbsp; <b>✅ Status:</b> ${rmSafe(r.status||'Started')}${r.tags?' &nbsp; <b>🏷️ Tags:</b> '+rmSafe(r.tags):''}</div>
+    ${r.notes?`<div><h3>📝 Notes</h3><div class="rm-notes">${rmSafe(plainText(r.notes))}</div></div>`:'<div class="rm-empty">No notes added.</div>'}
+    <div><h3>📎 Files (${files.length})</h3><div id="rmViewFiles" class="rm-file-list"><div class="muted">Loading files…</div></div></div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal();rmClearUrls()">Close</button><button class="btn primary" onclick="closeModal();rmClearUrls();openRecord('${r.id}')">✏️ Edit Record</button></div>
+  </div>`);
+  const box=document.getElementById('rmViewFiles');
+  if(!files.length){box.innerHTML='<div class="rm-empty">No files attached to this record.</div>';return}
+  const loaded=await Promise.all(files.map(async f=>({meta:f,data:await rmLoadFile(f.id)})));
+  box.innerHTML=loaded.map(({meta,data})=>{
+    const t=rmType(meta.name);
+    if(!data)return `<div class="rm-file"><div class="rm-file-icon">⚠️</div><div class="rm-file-info"><div class="rm-file-name">${rmSafe(meta.name)}</div><div class="rm-file-meta">File data not found in this browser.</div></div></div>`;
+    const u=rmUrl(data.blob);
+    return `<div class="rm-attachment-card">
+      <div class="rm-file"><div class="rm-file-icon">${rmIcon(t)}</div><div class="rm-file-info"><div class="rm-file-name">${rmSafe(meta.name)}</div><div class="rm-file-meta">${rmSize(meta.size)}</div></div></div>
+      ${t==='image'?`<img class="rm-photo" src="${u}" alt="${rmSafe(meta.name)}" onclick="rmPreviewImage('${u}','${rmSafe(meta.name)}')">`:''}
+      ${t==='pdf'?`<iframe class="rm-pdf" src="${u}" title="${rmSafe(meta.name)}"></iframe>`:''}
+      <div class="rm-attachment-actions"><a class="btn small primary" href="${u}" download="${rmSafe(meta.name)}">⬇️ Download</a>${t==='pdf'?`<button class="btn small" onclick="window.open('${u}','_blank','noopener')">Open PDF</button>`:''}</div>
+    </div>`;
+  }).join('');
+}
+function rmPreviewImage(url,name){
+  openModal(`<div class="rm-view"><div class="section-head"><h2>${rmSafe(name)}</h2><button class="btn" onclick="rmViewRecord('${rmEditId||''}')">Close</button></div><img src="${url}" alt="${rmSafe(name)}" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:10px"></div>`);
+}
+
+renderRecords=function(c){
+  const q=(document.getElementById('globalSearch')?.value||'').toLowerCase();
+  c.innerHTML=`<div class="rm-toolbar">
+    <input id="recordSearch" class="search" placeholder="🔍 Search records, notes, tags, files..." value="${rmSafe(q)}" aria-label="Search My Records">
+    <select id="recordCategoryFilter" onchange="filterRecords()"><option value="">All Categories</option>${db.categories.map(x=>`<option value="${rmSafe(x.id)}">${rmSafe(x.icon||'📁')} ${rmSafe(x.name)}</option>`).join('')}</select>
+    <select id="recordStatusFilter" onchange="filterRecords()"><option value="">All Status</option>${['Started','In Progress','Completed','Pending'].map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
+    <button class="btn" onclick="clearRecordFilters()">Clear</button>
+    <button class="btn primary" onclick="openRecord()">＋ Add My Record</button>
+  </div><div id="recordTable"></div>`;
+  document.getElementById('recordSearch').oninput=filterRecords;
+  filterRecords();
+};
+
+filterRecords=function(){
+  const wrap=document.getElementById('recordTable');if(!wrap)return;
+  const q=(document.getElementById('recordSearch')?.value||'').toLowerCase();
+  const cid=document.getElementById('recordCategoryFilter')?.value||'';
+  const status=document.getElementById('recordStatusFilter')?.value||'';
+  let rs=db.records.filter(r=>{
+    const files=(r.attachments||[]).map(f=>f.name).join(' ');
+    const text=[r.title,r.notes,r.webLink,r.date,r.priority,r.status,files,getCat(r.categoryId)?.name,getCourse(r.courseId)?.name,getTopic(r.topicId)?.name].join(' ').toLowerCase();
+    return (!q||text.includes(q))&&(!cid||r.categoryId===cid)&&(!status||r.status===status);
+  });
+  rs.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(!rs.length){wrap.innerHTML='<div class="rm-empty">No records found. Click <b>＋ Add My Record</b> to create one.</div>';return}
+  wrap.innerHTML=`<div class="muted" style="margin-bottom:8px">${rs.length} record${rs.length===1?'':'s'} found</div>
+  <div class="cards">${rs.map(r=>{
+    const fs=r.attachments||[];
+    return `<div class="card record-card">
+      <h3>${rmSafe(r.title||'Untitled Record')}</h3>
+      <div class="muted">📅 ${fmtDate(r.date)}</div>
+      <div class="muted" style="margin-top:5px">⭐ ${rmSafe(r.priority||'Normal')} • ✅ ${rmSafe(r.status||'Started')}</div>
+      <div class="rm-attachments">${fs.length?fs.map(f=>`<span class="rm-chip">${rmIcon(rmType(f.name))} ${rmSafe(f.name)}</span>`).join(''):'<span class="muted">No attachments</span>'}</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn small primary" onclick="rmViewRecord('${r.id}')">👁️ View</button>
+        <button class="btn small" onclick="openRecord('${r.id}')">✏️ Edit</button>
+        <button class="btn small" onclick="viewNotes('${r.id}')">📝 Notes</button>
+        <button class="btn small danger" onclick="delRecord('${r.id}')">🗑️ Delete</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+};
+clearRecordFilters=function(){
+  ['recordSearch','recordCategoryFilter','recordStatusFilter'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  filterRecords();
+};
+
+/* Keep existing delete behavior, but also remove attached files from IndexedDB. */
+const rmOriginalDelRecord=delRecord;
+delRecord=async function(id){
+  const r=db.records.find(x=>x.id===id);if(!r)return;
+  if(!confirm('Delete this My Record and all attached files?'))return;
+  for(const f of (r.attachments||[]))await rmDeleteFile(f.id);
+  db.records=db.records.filter(x=>x.id!==id);save();render();
+};
+
+</script>
+
+<style>
+/* ===== MY RECORDS: COURSE/LESSON LINKING ===== */
+.rm-record-link{
+  display:block;
+  color:inherit;
+  text-decoration:none;
+  cursor:pointer;
+  border-radius:10px;
+  padding:4px 6px;
+  margin:-4px -6px 6px;
+}
+.rm-record-link:hover{
+  background:#f1f5f9;
+}
+.rm-record-link:focus-visible{
+  outline:3px solid rgba(79,70,229,.28);
+  outline-offset:2px;
+}
+.rm-course-label{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+  font-weight:600;
+}
+.rm-course-label b{color:var(--text)}
+</style>
+<script>
+/* Course/Lesson -> matching My Record.
+   Clicking a Course/Lesson record opens the SAME full record viewer
+   used by the View button, so notes, date, status and attached files
+   are all visible in one place. */
+function rmFindRecordByCourse(courseId, topicId){
+  const rs=(db.records||[]).filter(r=>{
+    if(courseId && r.courseId===courseId && (!topicId || r.topicId===topicId)) return true;
+    return false;
+  });
+  rs.sort((a,b)=>(b.updatedAt||b.date||'').localeCompare(a.updatedAt||a.date||''));
+  return rs[0]||null;
+}
+
+async function rmOpenCourseLessonRecord(courseId, topicId){
+  const r=rmFindRecordByCourse(courseId,topicId);
+  if(r){
+    await rmViewRecord(r.id);
+    return;
+  }
+  /* If there is no saved record yet, open Add My Record with the
+     Course/Lesson preselected instead of showing a blank unrelated form. */
+  rmEditId=null;
+  rmSelectedFiles=[];
+  await openRecord();
+  const c=document.getElementById('fCourse');
+  const t=document.getElementById('fTopic');
+  if(c && courseId){
+    c.value=courseId;
+    c.dispatchEvent(new Event('change'));
+  }
+  if(t && topicId){
+    t.value=topicId;
+  }
+}
+
+/* Re-render the My Records cards so Course/Lesson is visible and clickable.
+   The card's normal View/Edit/Notes/Delete controls remain available. */
+const rmOriginalFilterRecords = filterRecords;
+filterRecords=function(){
+  rmOriginalFilterRecords();
+  const wrap=document.getElementById('recordTable');
+  if(!wrap)return;
+  wrap.querySelectorAll('.record-card').forEach(card=>{
+    const editBtn=Array.from(card.querySelectorAll('button')).find(b=>
+      (b.textContent||'').includes('Edit')
+    );
+    if(!editBtn)return;
+    const onclick=editBtn.getAttribute('onclick')||'';
+    const m=onclick.match(/openRecord\('([^']+)'\)/);
+    if(!m)return;
+    const r=(db.records||[]).find(x=>x.id===m[1]);
+    if(!r)return;
+
+    const title=card.querySelector('h3');
+    if(!title)return;
+
+    const course=getCourse(r.courseId);
+    const topic=getTopic(r.topicId);
+    if(!course && !topic)return;
+
+    const link=document.createElement('a');
+    link.className='rm-record-link';
+    link.href='#';
+    link.setAttribute('aria-label',
+      'Open record for '+(course?.name||'Course')+
+      (topic?.name?' — '+topic.name:'')
+    );
+    link.onclick=(e)=>{
+      e.preventDefault();
+      rmViewRecord(r.id);
+    };
+
+    const label=document.createElement('div');
+    label.className='rm-course-label';
+    label.innerHTML='📚 <b>'+rmSafe(course?.name||'Course')+'</b>'+
+      (topic?.name?' &nbsp;›&nbsp; '+rmSafe(topic.name):'');
+    link.appendChild(title.cloneNode(true));
+    link.appendChild(label);
+    title.replaceWith(link);
+  });
+}
+</script>
+
+
+<style>
+/* ===== FINAL MY RECORD NOTES CARD ===== */
+
+
+</style>
+<script>
+function rmOpenNotesEditor(id){
+  openRecord(id);
+  setTimeout(function(){
+    const n=document.getElementById('fNotes');
+    if(n){n.focus();n.scrollIntoView({behavior:'smooth',block:'center');}
+  },120);
+}
+</script>
+
+
+<style>
+/* ===== COMPACT MY RECORD CARD ===== */
+.record-card{
+  padding:14px !important;
+}
+.record-card h3{
+  margin-bottom:5px !important;
+}
+.record-card .rm-attachments{
+  margin-top:7px !important;
+}
+.record-card > div[style*="flex-wrap"]{
+  margin-top:9px !important;
+  gap:6px !important;
+}
+.record-card .btn.small{
+  padding:6px 9px !important;
+  font-size:12px !important;
+  min-height:32px;
+}
+</style>
+
+
+<style>
+/* ===== LESSON → SEPARATE RECORD VIEW ===== */
+.lesson-record-page{display:grid;gap:16px}
+.lesson-record-hero{
+  background:linear-gradient(135deg,#ffffff,#f8faff);
+  border:1px solid var(--line);border-radius:16px;padding:18px;
+  box-shadow:0 6px 22px rgba(15,23,42,.06)
+}
+.lesson-record-hero h2{margin:0 0 6px}
+.lesson-record-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.lesson-record-meta span{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}
+.lesson-record-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.lesson-record-card{padding:15px!important}
+.lesson-record-card h3{margin:0 0 5px}
+.lesson-record-detail{
+  display:grid;gap:14px;max-width:980px
+}
+.lesson-notes{
+  white-space:pre-wrap;line-height:1.7;padding:16px;
+  border:1px solid var(--line);border-radius:12px;background:#fff
+}
+.lesson-file-grid{display:grid;gap:10px}
+.lesson-file{
+  display:flex;align-items:center;gap:10px;padding:11px;
+  border:1px solid var(--line);border-radius:11px;background:#fff
+}
+.lesson-file .grow{flex:1;min-width:0}
+.lesson-file-name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lesson-file-meta{font-size:12px;color:var(--muted)}
+.lesson-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.lesson-photo-grid img{width:100%;height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.lesson-pdf{width:100%;height:65vh;border:1px solid var(--line);border-radius:10px}
+.lesson-backbar{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+<script>
+/* ===== FULL-PAGE LESSON RECORD FLOW ===== */
+let lessonRecordTopicId='';
+
+function lessonTopicInfo(topicId){
+  const t=getTopic(topicId), c=t?getCourse(t.courseId):null, ty=c?getType(c.typeId):null, cat=ty?getCat(ty.categoryId):null;
+  return {topic:t,course:c,type:ty,cat};
+}
+
+function openLessonRecordList(topicId){
+  lessonRecordTopicId=topicId;
+  currentView='lessonRecordView';
+  render();
+}
+
+function openSingleRecordPage(recordId){
+  window._singleRecordId=recordId;
+  currentView='singleRecordView';
+  render();
+}
+
+function renderLessonRecordView(c){
+  const info=lessonTopicInfo(lessonRecordTopicId);
+  if(!info.topic){currentView='courses';render();return}
+  const rs=db.records.filter(r=>r.topicId===lessonRecordTopicId)
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('title').textContent=info.topic.name;
+  c.innerHTML=`
+    <div class="lesson-record-page">
+      <div class="lesson-backbar">
+        <button class="btn" onclick="showCourse('${info.course.id}')">← Back to Course</button>
+        <button class="btn" onclick="show('records');setTimeout(()=>{const e=document.getElementById('recordFilter');if(e){e.value='${info.topic.id}';filterRecords()}},0)">All My Records</button>
+        <button class="btn primary" onclick="openRecord(null,'${info.course.id}')">＋ Daily Record</button>
+      </div>
+      <div class="lesson-record-hero">
+        <h2>📌 ${rmSafe(info.topic.name)}</h2>
+        <div class="muted">📚 ${rmSafe(info.course.name)} › ${rmSafe(info.topic.name)}</div>
+        <div class="lesson-record-meta">
+          <span>📅 ${rs.length} record${rs.length===1?'':'s'}</span>
+          <span>⭐ ${rs.filter(r=>r.priority==='High'||r.priority==='Urgent').length} high priority</span>
+          <span>📎 ${rs.reduce((n,r)=>n+(r.attachments?.length||0),0)} files</span>
+        </div>
+      </div>
+      ${rs.length?`<div class="lesson-record-list">${rs.map(r=>`
+        <article class="card lesson-record-card">
+          <a href="#" class="rm-record-link" onclick="event.preventDefault();openSingleRecordPage('${r.id}')">
+            <h3>${rmSafe(r.title||info.topic.name)}</h3>
+          </a>
+          <div class="muted">📚 ${rmSafe(info.course.name)} › ${rmSafe(info.topic.name)}</div>
+          <div class="muted" style="margin-top:5px">📅 ${fmtDate(r.date)} &nbsp; ⭐ ${rmSafe(r.priority||'Normal')} &nbsp; ✅ ${rmSafe(r.status||'Started')}</div>
+          <div class="rm-attachments" style="margin-top:8px">
+            ${(r.attachments||[]).length ? (r.attachments||[]).map(f=>`<span class="rm-chip">${rmIcon(rmType(f.name))} ${rmSafe(f.name)}</span>`).join('') : '<span class="muted">No attachments</span>'}
+          </div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn small primary" onclick="openSingleRecordPage('${r.id}')">👁️ View</button>
+            <button class="btn small" onclick="openRecord('${r.id}')">✏️ Edit</button>
+            <button class="btn small" onclick="rmOpenNotesEditor('${r.id}')">📝 Notes</button>
+            <button class="btn small danger" onclick="delRecord('${r.id}')">🗑️ Delete</button>
+          </div>
+        </article>`).join('')}</div>`:
+        `<div class="empty">No records for this lesson yet. Click <b>＋ Daily Record</b> to add one.</div>`}
+    </div>`;
+}
+
+async function renderSingleRecordView(c){
+  const r=db.records.find(x=>x.id===window._singleRecordId);
+  if(!r){openLessonRecordList(lessonRecordTopicId);return}
+  const info=lessonTopicInfo(r.topicId);
+  document.getElementById('title').textContent=r.title||'Record';
+  const files=Array.isArray(r.attachments)?r.attachments:[];
+  c.innerHTML=`
+    <div class="lesson-record-detail">
+      <div class="lesson-backbar">
+        <button class="btn" onclick="openLessonRecordList('${r.topicId}')">← Back to ${rmSafe(info.topic?.name||'Lesson')}</button>
+        <button class="btn" onclick="show('records')">My Records</button>
+        <button class="btn" onclick="openRecord('${r.id}')">✏️ Edit</button>
+      </div>
+      <div class="lesson-record-hero">
+        <h2>📝 ${rmSafe(r.title||'My Record')}</h2>
+        <div class="muted">📚 ${rmSafe(info.course?.name||'Course')} › ${rmSafe(info.topic?.name||'Lesson')}</div>
+        <div class="lesson-record-meta">
+          <span>📅 ${fmtDate(r.date)}</span>
+          <span>⭐ ${rmSafe(r.priority||'Normal')}</span>
+          <span>✅ ${rmSafe(r.status||'Started')}</span>
+          <span>⏱️ ${rmSafe(r.hours||0)} hrs</span>
+        </div>
+      </div>
+      <section class="card">
+        <h3>📝 Notes</h3>
+        ${r.notes?`<div class="lesson-notes">${rmSafe(plainText(r.notes))}</div>`:`<div class="empty">No notes added.</div>`}
+      </section>
+      <section class="card">
+        <h3>📎 Photos & Documents (${files.length})</h3>
+        <div id="lessonDetailFiles" class="lesson-file-grid">
+          ${files.length?'Loading attachments…':'<div class="empty">No attachments</div>'}
+        </div>
+      </section>
+      ${r.webLink?`<section class="card"><h3>🔗 Reference</h3><a href="${rmSafe(r.webLink)}" target="_blank" rel="noopener noreferrer">${rmSafe(r.webLink)}</a></section>`:''}
+    </div>`;
+  if(!files.length)return;
+  const loaded=await Promise.all(files.map(async f=>({meta:f,data:await rmLoadFile(f.id)})));
+  const box=document.getElementById('lessonDetailFiles');
+  if(!box)return;
+  const photos=loaded.filter(x=>x.data&&rmType(x.meta.name)==='image');
+  const others=loaded.filter(x=>x.data&&rmType(x.meta.name)!=='image');
+  let html='';
+  if(photos.length){
+    html+=`<div class="lesson-photo-grid">${photos.map(({meta,data})=>{
+      const u=rmUrl(data.blob);
+      return `<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="${rmSafe(meta.name)}"></a>`;
+    }).join('')}</div>`;
+  }
+  html+=others.map(({meta,data})=>{
+    const u=rmUrl(data.blob), t=rmType(meta.name);
+    return `<div class="lesson-file">
+      <div class="rm-file-icon">${rmIcon(t)}</div>
+      <div class="grow"><div class="lesson-file-name">${rmSafe(meta.name)}</div><div class="lesson-file-meta">${rmSize(meta.size)}</div></div>
+      ${t==='pdf'?`<button class="btn small" onclick="window.open('${u}','_blank','noopener')">View PDF</button>`:''}
+      <a class="btn small primary" href="${u}" download="${rmSafe(meta.name)}">⬇️ Download</a>
+    </div>
+    ${t==='pdf'?`<iframe class="lesson-pdf" src="${u}" title="${rmSafe(meta.name)}"></iframe>`:''}`;
+  }).join('');
+  box.innerHTML=html||'<div class="empty">Attachment data is not available in this browser.</div>';
+}
+
+/* Make the existing Course → Lesson click open the separate lesson record page. */
+topicRecords=function(id){openLessonRecordList(id)};
+
+/* Also make the record title in My Records open the same separate full-page record view. */
+const _oldFilterForSeparateView=filterRecords;
+filterRecords=function(){
+  _oldFilterForSeparateView();
+  const wrap=document.getElementById('recordTable');if(!wrap)return;
+  wrap.querySelectorAll('.record-card').forEach(card=>{
+    const title=card.querySelector('h3');
+    if(!title)return;
+    const editBtn=Array.from(card.querySelectorAll('button')).find(b=>(b.textContent||'').includes('Edit'));
+    const m=(editBtn?.getAttribute('onclick')||'').match(/openRecord\('([^']+)'\)/);
+    if(!m)return;
+    const r=db.records.find(x=>x.id===m[1]);if(!r)return;
+    title.style.cursor='pointer';
+    title.title='Open separate record view';
+    title.onclick=()=>openSingleRecordPage(r.id);
+  });
+};
+
+/* Extend the main renderer with the two dedicated views. */
+const _baseRender=render;
+render=function(){
+  const c=document.getElementById('content');
+  if(currentView==='lessonRecordView')return renderLessonRecordView(c);
+  if(currentView==='singleRecordView')return renderSingleRecordView(c);
+  return _baseRender();
+};
+</script>
+
+
+<script>
+/* ===== COURSE ROOT MANAGEMENT ===== */
+function crmCourseCount(courseId){
+  return (db.topics||[]).filter(t=>t.courseId===courseId).length;
+}
+function crmRecordCount(courseId){
+  return (db.records||[]).filter(r=>r.courseId===courseId).length;
+}
+function crmSafeName(v){return rmSafe(v||'Untitled')}
+
+function crmOpenCourse(courseId){
+  const c=getCourse(courseId);
+  if(!c)return;
+  /* Use the existing course screen, but keep navigation consistent. */
+  if(typeof showCourse==='function'){showCourse(courseId);return;}
+  currentView='course';
+  window._courseId=courseId;
+  render();
+}
+
+function crmEditCourse(courseId){
+  /* Reuse existing course editor when available. */
+  if(typeof editCourse==='function'){editCourse(courseId);return;}
+  if(typeof openCourseForm==='function'){openCourseForm(courseId);return;}
+  alert('Course editor is not available in this version.');
+}
+
+function crmDeleteCourse(courseId){
+  const c=getCourse(courseId);
+  if(!c)return;
+  const lessons=(db.topics||[]).filter(t=>t.courseId===courseId);
+  const records=(db.records||[]).filter(r=>r.courseId===courseId);
+  const msg=`Delete "${c.name}"?\n\n${lessons.length} lesson(s) and ${records.length} record(s) are linked to this course.`;
+  if(!confirm(msg))return;
+  db.categories=db.categories||[];
+  db.courses=(db.courses||[]).filter(x=>x.id!==courseId);
+  db.topics=(db.topics||[]).filter(x=>x.courseId!==courseId);
+  db.records=(db.records||[]).filter(x=>x.courseId!==courseId);
+  save(); render();
+}
+
+function crmRenderRoot(c){
+  const courses=db.courses||[];
+  const q=(document.getElementById('crmSearch')?.value||'').toLowerCase();
+  const filtered=courses.filter(x=>{
+    const type=getType(x.typeId), cat=type?getCat(type.categoryId):null;
+    return !q || [x.name,type?.name,cat?.name].join(' ').toLowerCase().includes(q);
+  });
+
+  const totalLessons=courses.reduce((n,x)=>n+crmCourseCount(x.id),0);
+  const totalRecords=courses.reduce((n,x)=>n+crmRecordCount(x.id),0);
+
+  c.innerHTML=`
+  <div class="crm-shell">
+    <div class="crm-head">
+      <div>
+        <h2 class="crm-title">📚 Course Root Management</h2>
+        <div class="crm-sub">Manage Courses → Lessons → My Records from one place.</div>
+      </div>
+      <div class="crm-actions">
+        <button class="btn" onclick="history.back()">← Back</button>
+        <button class="btn primary" onclick="addCourse()">＋ Add Course</button>
+      </div>
+    </div>
+
+    <div class="crm-path">🏠 Home <span>›</span> <strong>Course Root Management</strong></div>
+
+    <div class="crm-statbar">
+      <div class="crm-stat"><b>${courses.length}</b><span>Courses</span></div>
+      <div class="crm-stat"><b>${totalLessons}</b><span>Lessons</span></div>
+      <div class="crm-stat"><b>${totalRecords}</b><span>My Records</span></div>
+    </div>
+
+    <div class="crm-toolbar">
+      <input id="crmSearch" class="search" placeholder="🔍 Search courses, course types, categories..." aria-label="Search courses">
+      <button class="btn" onclick="document.getElementById('crmSearch').value='';crmRenderRoot(document.getElementById('content'))">Clear</button>
+    </div>
+
+    ${filtered.length?`<div class="crm-grid">${filtered.map(course=>{
+      const type=getType(course.typeId), cat=type?getCat(type.categoryId):null;
+      const lessons=crmCourseCount(course.id), records=crmRecordCount(course.id);
+      return `<article class="card crm-card">
+        <a href="#" class="crm-primary" onclick="event.preventDefault();crmOpenCourse('${course.id}')">
+          <h3>📚 ${crmSafeName(course.name)}</h3>
+          <div class="muted">${cat?rmSafe(cat.icon||'📁')+' '+rmSafe(cat.name):''}${type?' › '+rmSafe(type.name):''}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">
+            <span class="crm-count">📌 ${lessons} lesson${lessons===1?'':'s'}</span>
+            <span class="crm-count">📝 ${records} record${records===1?'':'s'}</span>
+          </div>
+        </a>
+        <div class="crm-card-actions">
+          <button class="btn small primary" onclick="crmOpenCourse('${course.id}')">Open</button>
+          <button class="btn small" onclick="crmEditCourse('${course.id}')">✏️ Edit</button>
+          <button class="btn small danger" onclick="crmDeleteCourse('${course.id}')">🗑️ Delete</button>
+        </div>
+      </article>`;
+    }).join('')}</div>`:
+    `<div class="crm-empty">No courses found.<br><button class="btn primary" style="margin-top:10px" onclick="addCourse()">＋ Add Course</button></div>`}
+  </div>`;
+
+  document.getElementById('crmSearch').oninput=()=>crmRenderRoot(document.getElementById('content'));
+}
+
+/* If the existing app has a course-root view, make it use the polished screen.
+   Otherwise expose a global function that can be called by the existing button. */
+function openCourseRootManagement(){
+  currentView='courseRootManagement';
+  render();
+}
+
+const _crmBaseRender=render;
+render=function(){
+  const c=document.getElementById('content');
+  if(currentView==='courseRootManagement')return crmRenderRoot(c);
+  return _crmBaseRender();
+};
+
+/* Common navigation aliases, so existing Course Management buttons can call it. */
+window.openCourseRootManagement=openCourseRootManagement;
+window.courseRootManagement=openCourseRootManagement;
+</script>
+
 </body>
 </html>
