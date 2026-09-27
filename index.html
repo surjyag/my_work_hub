@@ -181,6 +181,17 @@ body.auth-locked .app{display:none!important}
 .rm-pdf{width:100%;height:65vh;border:1px solid var(--line);border-radius:10px}
 .rm-attachment-card{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
 .rm-attachment-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.record-card-actions{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.record-card-actions .record-delete-btn{
+  margin-left:auto;
+}
+
 .rm-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .rm-toolbar .search{flex:1;min-width:220px}
 .rm-empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
@@ -272,6 +283,221 @@ body.auth-locked .app{display:none!important}
 @media(max-width:700px){
   .crm-head{align-items:flex-start;flex-direction:column}
   .crm-statbar{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="requested-ui-fixes">
+/* Screenshot 1: action buttons */
+.lesson-record-card-actions{
+  display:flex !important;
+  align-items:center !important;
+  gap:7px !important;
+  width:100% !important;
+  flex-wrap:nowrap !important;
+  margin-top:10px !important;
+}
+.lesson-record-card-actions .lesson-delete-btn{
+  margin-left:auto !important;
+}
+
+/* Screenshot 2: Notes heading + Edit on the far right */
+.lesson-notes-header{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  width:100% !important;
+  margin:0 0 10px !important;
+}
+.lesson-notes-header h3{
+  margin:0 !important;
+}
+</style>
+
+
+<script>
+function inlineEditNotes(id){
+  const r = db.records.find(x => x.id === id);
+  if(!r) return;
+
+  const display = document.getElementById('inlineNotesDisplay-' + id);
+  if(!display) return;
+
+  const current = r.notes || '';
+  display.innerHTML = `
+    <div class="inline-notes-editor-wrap">
+      <div class="inline-editor-toolbar">
+        <button type="button" onclick="inlineCmd('bold')" title="Bold"><b>B</b></button>
+        <button type="button" onclick="inlineCmd('italic')" title="Italic"><i>I</i></button>
+        <button type="button" onclick="inlineCmd('underline')" title="Underline"><u>U</u></button>
+      </div>
+      <div id="inlineNotesEditor-${id}" class="inline-notes-editor" contenteditable="true">${current}</div>
+      <div class="inline-notes-actions">
+        <button type="button" class="btn small" onclick="cancelInlineNotes('${id}')">Cancel</button>
+        <button type="button" class="btn small primary" onclick="saveInlineNotes('${id}')">Save</button>
+      </div>
+    </div>`;
+
+  const editor = document.getElementById('inlineNotesEditor-' + id);
+  if(editor){
+    editor.focus();
+    editor.scrollIntoView({behavior:'smooth', block:'nearest'});
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+function inlineCmd(command){
+  document.execCommand(command, false, null);
+}
+
+function saveInlineNotes(id){
+  const r = db.records.find(x => x.id === id);
+  const editor = document.getElementById('inlineNotesEditor-' + id);
+  const display = document.getElementById('inlineNotesDisplay-' + id);
+  if(!r || !editor || !display) return;
+
+  r.notes = editor.innerHTML.trim();
+  r.updatedAt = new Date().toISOString();
+  save();
+
+  display.innerHTML = r.notes
+    ? `<div class="lesson-notes">${rmSafe(plainText(r.notes))}</div>`
+    : `<div class="empty">No notes added.</div>`;
+
+  alert('Notes saved successfully');
+}
+
+function cancelInlineNotes(id){
+  const r = db.records.find(x => x.id === id);
+  const display = document.getElementById('inlineNotesDisplay-' + id);
+  if(!r || !display) return;
+
+  display.innerHTML = r.notes
+    ? `<div class="lesson-notes">${rmSafe(plainText(r.notes))}</div>`
+    : `<div class="empty">No notes added.</div>`;
+}
+</script>
+
+
+<style id="inline-notes-edit-style">
+.lesson-notes-card .lesson-notes-header{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  width:100% !important;
+  gap:12px !important;
+  margin:0 0 10px !important;
+}
+.lesson-notes-card .lesson-notes-header h3{margin:0 !important;}
+.inline-notes-editor-wrap{
+  width:100%;
+}
+.inline-editor-toolbar{
+  display:flex;
+  gap:5px;
+  padding:7px;
+  border:1px solid var(--line);
+  border-bottom:0;
+  border-radius:10px 10px 0 0;
+  background:#f7f8fc;
+}
+.inline-editor-toolbar button{
+  min-width:32px;
+  height:30px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fff;
+  cursor:pointer;
+}
+.inline-notes-editor{
+  min-height:130px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:0 0 10px 10px;
+  background:#fff;
+  outline:none;
+  line-height:1.7;
+  white-space:pre-wrap;
+}
+.inline-notes-editor:focus{
+  box-shadow:0 0 0 2px rgba(99,102,241,.15);
+}
+.inline-notes-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  margin-top:10px;
+}
+</style>
+
+
+<style id="FINAL-RECORD-LAYOUT-FIX">
+/* LIST PAGE: cards must shrink to their actual content height */
+.lesson-record-list{
+  align-items:start !important;
+}
+.lesson-record-list > .lesson-record-card{
+  align-self:start !important;
+  height:fit-content !important;
+  min-height:0 !important;
+}
+
+/* LIST PAGE: only View + Notes */
+.lesson-record-card-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  width:auto !important;
+  gap:7px !important;
+  margin-top:10px !important;
+  flex-wrap:wrap !important;
+}
+.lesson-record-card-actions .lesson-delete-btn{
+  display:none !important;
+}
+
+/* DETAIL/LAST PAGE: Delete is isolated in the bottom-right corner */
+.single-record-delete-bar{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  width:100% !important;
+  margin-top:0 !important;
+  padding:0 !important;
+}
+.single-record-delete-bar .btn.danger{
+  margin-left:auto !important;
+}
+</style>
+
+
+<style id="CLEAN-LESSON-CARDS-FINAL">
+.lesson-record-list{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr)) !important;
+  gap:14px !important;
+  align-items:start !important;
+  grid-auto-rows:max-content !important;
+}
+.lesson-record-list > .lesson-record-card{
+  align-self:start !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:0 !important;
+}
+.lesson-record-card{
+  height:auto !important;
+  min-height:0 !important;
+}
+.lesson-record-card-actions{
+  display:none !important;
 }
 </style>
 
@@ -1201,11 +1427,10 @@ filterRecords=function(){
       <div class="muted">📅 ${fmtDate(r.date)}</div>
       <div class="muted" style="margin-top:5px">⭐ ${rmSafe(r.priority||'Normal')} • ✅ ${rmSafe(r.status||'Started')}</div>
       <div class="rm-attachments">${fs.length?fs.map(f=>`<span class="rm-chip">${rmIcon(rmType(f.name))} ${rmSafe(f.name)}</span>`).join(''):'<span class="muted">No attachments</span>'}</div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+      <div class="record-card-actions">
         <button class="btn small primary" onclick="rmViewRecord('${r.id}')">👁️ View</button>
-        <button class="btn small" onclick="openRecord('${r.id}')">✏️ Edit</button>
         <button class="btn small" onclick="viewNotes('${r.id}')">📝 Notes</button>
-        <button class="btn small danger" onclick="delRecord('${r.id}')">🗑️ Delete</button>
+        <button class="btn small danger record-delete-btn" onclick="delRecord('${r.id}')">🗑️ Delete</button>
       </div>
     </div>`;
   }).join('')}</div>`;
@@ -1441,7 +1666,6 @@ function renderLessonRecordView(c){
     <div class="lesson-record-page">
       <div class="lesson-backbar">
         <button class="btn" onclick="showCourse('${info.course.id}')">← Back to Course</button>
-        <button class="btn" onclick="show('records');setTimeout(()=>{const e=document.getElementById('recordFilter');if(e){e.value='${info.topic.id}';filterRecords()}},0)">All My Records</button>
         <button class="btn primary" onclick="openRecord(null,'${info.course.id}')">＋ Daily Record</button>
       </div>
       <div class="lesson-record-hero">
@@ -1463,12 +1687,6 @@ function renderLessonRecordView(c){
           <div class="rm-attachments" style="margin-top:8px">
             ${(r.attachments||[]).length ? (r.attachments||[]).map(f=>`<span class="rm-chip">${rmIcon(rmType(f.name))} ${rmSafe(f.name)}</span>`).join('') : '<span class="muted">No attachments</span>'}
           </div>
-          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
-            <button class="btn small primary" onclick="openSingleRecordPage('${r.id}')">👁️ View</button>
-            <button class="btn small" onclick="openRecord('${r.id}')">✏️ Edit</button>
-            <button class="btn small" onclick="rmOpenNotesEditor('${r.id}')">📝 Notes</button>
-            <button class="btn small danger" onclick="delRecord('${r.id}')">🗑️ Delete</button>
-          </div>
         </article>`).join('')}</div>`:
         `<div class="empty">No records for this lesson yet. Click <b>＋ Daily Record</b> to add one.</div>`}
     </div>`;
@@ -1484,7 +1702,6 @@ async function renderSingleRecordView(c){
     <div class="lesson-record-detail">
       <div class="lesson-backbar">
         <button class="btn" onclick="openLessonRecordList('${r.topicId}')">← Back to ${rmSafe(info.topic?.name||'Lesson')}</button>
-        <button class="btn" onclick="show('records')">My Records</button>
         <button class="btn" onclick="openRecord('${r.id}')">✏️ Edit</button>
       </div>
       <div class="lesson-record-hero">
@@ -1497,9 +1714,14 @@ async function renderSingleRecordView(c){
           <span>⏱️ ${rmSafe(r.hours||0)} hrs</span>
         </div>
       </div>
-      <section class="card">
-        <h3>📝 Notes</h3>
-        ${r.notes?`<div class="lesson-notes">${rmSafe(plainText(r.notes))}</div>`:`<div class="empty">No notes added.</div>`}
+      <section class="card lesson-notes-card" id="lessonNotesCard-${r.id}">
+        <div class="lesson-notes-header">
+          <h3>📝 Notes</h3>
+          <button class="btn small" type="button" onclick="inlineEditNotes('${r.id}')">Edit</button>
+        </div>
+        <div id="inlineNotesDisplay-${r.id}">
+          ${r.notes?`<div class="lesson-notes">${rmSafe(plainText(r.notes))}</div>`:`<div class="empty">No notes added.</div>`}
+        </div>
       </section>
       <section class="card">
         <h3>📎 Photos & Documents (${files.length})</h3>
@@ -1508,6 +1730,9 @@ async function renderSingleRecordView(c){
         </div>
       </section>
       ${r.webLink?`<section class="card"><h3>🔗 Reference</h3><a href="${rmSafe(r.webLink)}" target="_blank" rel="noopener noreferrer">${rmSafe(r.webLink)}</a></section>`:''}
+      <div class="single-record-delete-bar">
+        <button class="btn small danger" type="button" onclick="delRecord('${r.id}')">🗑️ Delete Record</button>
+      </div>
     </div>`;
   if(!files.length)return;
   const loaded=await Promise.all(files.map(async f=>({meta:f,data:await rmLoadFile(f.id)})));
